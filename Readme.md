@@ -39,7 +39,7 @@ Flowchart : ![Flowchart](FlowChart.png)
 
 # Example
 
-[![video](example.mp4)]
+![video]([example.mp4](https://github.com/osboz/MovingAShape/blob/main/example.mp4))
 
 # Changes
 
