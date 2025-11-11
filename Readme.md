@@ -35,11 +35,11 @@ Because the balls follow each other, at some point they should end up at the sam
 
 # Flowchart
 
-Flowchart : ![Flowchart](FlowChart.png.png)
+Flowchart : ![Flowchart](FlowChart.png)
 
 # Example
 
-[video](example.mp4)
+![video](example.mp4)
 
 # Changes
 
