@@ -1,4 +1,4 @@
-# FrankenText
+# Moving a Shape
 
 The [Problem](#Problem)
 
@@ -39,7 +39,7 @@ Flowchart : ![Flowchart](FlowChart.png)
 
 # Example
 
-[![video](example.mp4)]
+[video](https://github.com/osboz/MovingAShape/blob/main/example.mp4)
 
 # Changes
 
