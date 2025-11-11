@@ -88,6 +88,11 @@ Ball *init_ball_random(Ball *p, int i)
     return p;
 }
 
+/**
+ * @brief Set the Newleader value in a ball
+ * 
+ * @param p Ball to set parameter in
+ */
 void SetNewleader(Ball *p)
 {
     size_t otherBallID = rand() % BALL_COUNT;
@@ -303,10 +308,10 @@ void BallBounce(Ball *_p)
         b->posy += ny * overlap;
 
         // simple mass ~ area (radius^2)
-        // float massA = _p->radius * _p->radius;
-        // float massB = b->radius * b->radius;
-        float massA = 0.01f;
-        float massB = 0.01f;
+        float massA = _p->radius * _p->radius;
+        float massB = b->radius * b->radius;
+        // float massA = 0.01f;
+        // float massB = 0.01f;
 
         // relative velocity
         float rvx = b->velx - _p->velx;
@@ -361,7 +366,7 @@ void update_elements()
     
     for (size_t i = 0; i < BALL_COUNT; ++i)
     {
-    DrawTargetLine(&balls[i]);
+        DrawTargetLine(&balls[i]);
     }
 
     // draw velocity line
@@ -369,11 +374,7 @@ void update_elements()
     {
         DrawLine(balls[i].posx, balls[i].posy, balls[i].posx + balls[i].velx * 20, balls[i].posy + balls[i].vely * 20, GREEN);
     }
-    // // draw velocity line
-    // for (size_t i = 0; i < BALL_COUNT; ++i)
-    // {
-    //     DrawLine(balls[i].posx, balls[i].posy, balls[i].posx + balls[i].velx * 10, balls[i].posy + balls[i].vely * 10, GREEN);
-    // }
+
 }
 
 int main()
