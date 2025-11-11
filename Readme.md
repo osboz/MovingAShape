@@ -8,17 +8,18 @@
 
 > [Changes](#Changes) made.
 
-https://c-programming.aydos.de/week08/frankentext.html
+https://c-programming.aydos.de/week09.html
 
 ---
 
 # Learning goals
 
-    -use struct and union
-    -explain the trade-offs of using struct vs arrays
-    -implement self-referencing data structures
-    -use typedef to shorten struct definitions
-    -integrate and use an external library
+    use struct and union
+    explain the trade-offs of using struct vs arrays
+    implement self-referencing data structures
+    use typedef to shorten struct definitions
+    integrate and use an external library
+
 
 # Problem
 
@@ -64,3 +65,5 @@ Flowchart : ![Flowchart](Flowchart_FrankText.png)
 - Changed some things outside the "your code here" area.
   - My prefered naming convetions-
   - Extra new lines to make text easier to read in console.
+
+#flowchart2

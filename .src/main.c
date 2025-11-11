@@ -8,14 +8,16 @@
 #define WIDTH 800
 #define HEIGHT 800
 #define TITLE "Balls and their admirers"
-#define BALL_COUNT 100
+#define BALL_COUNT 20
 #define FPS 60
-#define VEL_MAX 5
+#define VEL_MAX 10
 #define RADIUS_MAX 20
 #define RADIUS_MIN 5
 
 // acceleration multiplier
-#define ACCEL_MULT 0.001f
+#define ACCEL_MULT 0.0001f
+#define ACCEL_MAX 100
+#define ACCEL_MIN 1
 
 Color COLORS[] = {
     LIGHTGRAY,
@@ -52,7 +54,7 @@ const int ColoursCount = sizeof(COLORS) / sizeof(COLORS[0]);
  */
 typedef struct Ball
 {
-    float posx, posy, velx, vely;
+    float posx, posy, velx, vely, accelPower;
     float radius;
     Color colour;
     struct Ball *follows;
@@ -69,12 +71,14 @@ Ball *init_ball_random(Ball *p, int i)
     p->posy = rand() % HEIGHT;
     p->radius = rand() % RADIUS_MAX + RADIUS_MIN;
     p->colour = COLORS[rand() % ColoursCount];
+    p->accelPower = (float)((rand() % ACCEL_MAX) + ACCEL_MIN);
 
     // makes the initial velocity a random value between -VEL_MAX and +VEL_MAX
-    p->velx = (rand() % (2 * VEL_MAX + 1)) - VEL_MAX;
-    p->vely = (rand() % (2 * VEL_MAX + 1)) - VEL_MAX;
+    p->velx = ((rand() % (2 * VEL_MAX + 1)) - VEL_MAX) / VEL_MAX;
+    p->vely = ((rand() % (2 * VEL_MAX + 1)) - VEL_MAX) / VEL_MAX;
 
     p->maxSpeed = 1 + rand() % VEL_MAX;
+    // p->maxSpeed = VEL_MAX;
 
     // Find a leading ball other than the initialized ball itself.
     Ball *leader; // Represents the leading ball that this ball will follow
@@ -82,6 +86,17 @@ Ball *init_ball_random(Ball *p, int i)
     // YOUR CODE HERE
     // imma do it outside ngl
     return p;
+}
+
+void SetNewleader(Ball *p)
+{
+    size_t otherBallID = rand() % BALL_COUNT;
+    if (&balls[otherBallID] == p) // if the leader is itself
+        p->velx = rand() % VEL_MAX,
+        p->vely = rand() % VEL_MAX,
+        p->follows = NULL; // follow nobody — keep initial velocity
+    else
+        p->follows = &balls[otherBallID];
 }
 
 /**
@@ -97,13 +112,7 @@ void init_balls_random()
     // give each ball a ball to follow
     for (size_t i = 0; i < BALL_COUNT; ++i)
     {
-        // since we're instantiation all balls, we can make even an undefined ball to the leader since it will be inistaniteded before we run it.
-        // so we can just make a random number and it will be in the range of 0 to BALL_COUNT - 1
-        size_t otherBallID = rand() % BALL_COUNT;
-        if (otherBallID == i)
-            balls[i].follows = NULL; // follow nobody — keep initial velocity
-        else
-            balls[i].follows = &balls[otherBallID];
+        SetNewleader(&balls[i]);
     }
 }
 
@@ -115,6 +124,8 @@ void init_balls_random()
  */
 Ball *draw_ball(Ball *p)
 {
+    if (p->follows != NULL)
+        DrawLine(p->posx, p->posy, p->follows->posx, p->follows->posy, p->follows->colour);
     DrawCircle(p->posx, p->posy, p->radius, p->colour);
     return p;
 }
@@ -158,6 +169,25 @@ Ball *update_pos(Ball *p)
     return p;
 }
 
+void ReachedTarget(Ball *p)
+{
+    if (p == NULL || p->follows == NULL)
+        return;
+
+    Ball *t = p->follows;
+    float dx = t->posx - p->posx;
+    float dy = t->posy - p->posy;
+    float dist2 = dx * dx + dy * dy;
+
+    // float threshold = (p->radius * 0.5f) + (t->radius * 0.5f);
+    float threshold = (p->radius) + (t->radius);
+    float thresh2 = threshold * threshold;
+
+    if (dist2 <= thresh2)
+    {
+        SetNewleader(p);
+    }
+}
 // Updates the velocity of a ball so that it follows the leading ball
 Ball *update_vel_for_following(Ball *p)
 {
@@ -170,17 +200,18 @@ Ball *update_vel_for_following(Ball *p)
     float erry = p->follows->posy - p->posy;
 
     // scale error by acceleration multiplier
-    p->velx += errx * ACCEL_MULT;
-    p->vely += erry * ACCEL_MULT;
+    p->velx += errx * p->accelPower * ACCEL_MULT;
+    p->vely += erry * p->accelPower * ACCEL_MULT;
 
     // find the movement vector's magnitude
     float speed = sqrt(p->velx * p->velx + p->vely * p->vely);
-
 
     // scale the movement vector to max speed
     float scale = (speed > p->maxSpeed) ? (p->maxSpeed / speed) : 1.0f;
     p->velx *= scale;
     p->vely *= scale;
+
+    ReachedTarget(p);
 
     return p;
 }
